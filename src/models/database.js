@@ -4,10 +4,12 @@ const fs = require('fs');
 
 const dbPath = process.env.DB_PATH || path.join(__dirname, '..', '..', 'data', 'vdd.db');
 
-// Ensure data directory exists
-const dataDir = path.dirname(dbPath);
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
+// Ensure data directory exists (skip in Vercel's read-only filesystem)
+if (process.env.VERCEL !== '1') {
+  const dataDir = path.dirname(dbPath);
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
 }
 
 // Database wrapper to provide a similar API to better-sqlite3
