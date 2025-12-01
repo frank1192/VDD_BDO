@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesión - VDD BDO</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <h1>VDD BDO</h1>
+      <p class="subtitle">Sistema de Valoración de Desempeño</p>
+      
+      <% if (typeof flash !== 'undefined' && flash && flash.error) { %>
+      <div class="alert alert-error">
+        <%= flash.error %>
+      </div>
+      <% } %>
+      
+      <% if (typeof flash !== 'undefined' && flash && flash.success) { %>
+      <div class="alert alert-success">
+        <%= flash.success %>
+      </div>
+      <% } %>
+      
+      <form method="POST" action="/login">
+        <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+        <div class="form-group">
+          <label for="username">Usuario</label>
+          <input type="text" id="username" name="username" required placeholder="Ingrese su usuario">
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" name="password" required placeholder="Ingrese su contraseña">
+        </div>
+        
+        <button type="submit" class="btn btn-primary btn-lg">Iniciar Sesión</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

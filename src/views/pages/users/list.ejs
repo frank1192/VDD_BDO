@@ -1,0 +1,63 @@
+<%- include('../../layouts/main', { body: `
+<div class="page-header">
+  <h2>Gestión de Usuarios</h2>
+  <p class="breadcrumb">Inicio / Usuarios</p>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3>Lista de Usuarios</h3>
+    <a href="/users/new" class="btn btn-primary">Nuevo Usuario</a>
+  </div>
+  
+  ${users.length === 0 ? `
+    <div class="empty-state">
+      <div class="icon">👥</div>
+      <h3>No hay usuarios registrados</h3>
+      <p>Comience agregando usuarios al sistema</p>
+    </div>
+  ` : `
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Usuario</th>
+            <th>Rol</th>
+            <th>Líder</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${users.map(u => `
+            <tr>
+              <td>${u.name}</td>
+              <td>${u.username}</td>
+              <td>
+                <span class="badge badge-${u.role}">
+                  ${u.role === 'admin' ? 'Administrador' : 
+                    u.role === 'analyst' ? 'Analista' : 
+                    u.role === 'coordinator' ? 'Coordinador' : 'Líder'}
+                </span>
+              </td>
+              <td>${u.leader_name || '-'}</td>
+              <td class="actions">
+                <a href="/users/${u.id}/edit" class="btn btn-secondary btn-sm">Editar</a>
+                ${u.role !== 'admin' ? `
+                  <a href="/users/${u.id}/config" class="btn btn-primary btn-sm">Configurar %</a>
+                ` : ''}
+                ${u.id !== 1 ? `
+                  <form method="POST" action="/users/${u.id}/delete" style="display: inline;" onsubmit="return confirmDelete('¿Está seguro de eliminar a ${u.name}?')">
+                    <input type="hidden" name="_csrf" value="${typeof csrfToken !== 'undefined' ? csrfToken : ''}">
+                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                  </form>
+                ` : ''}
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `}
+</div>
+` }) %>

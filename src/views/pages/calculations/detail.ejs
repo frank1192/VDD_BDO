@@ -1,0 +1,122 @@
+<%- include('../../layouts/main', { body: `
+<div class="page-header">
+  <h2>${isOwnCalculation ? 'Mi Resultado' : 'Resultado de ' + user.name}</h2>
+  <p class="breadcrumb">Inicio / Cálculos / ${isOwnCalculation ? 'Mi Resultado' : user.name}</p>
+</div>
+
+<div class="calculation-summary">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <div class="label">Nota Final</div>
+      <div class="score">${result.finalScore.toFixed(2)}</div>
+    </div>
+    <div style="text-align: right;">
+      <div class="label">Usuario: ${user.name}</div>
+      <div class="label">Rol: ${user.role === 'analyst' ? 'Analista' : user.role === 'coordinator' ? 'Coordinador' : 'Líder'}</div>
+      ${result.totalPercentage ? '<div class="label">Total Ponderación: ' + result.totalPercentage.toFixed(2) + '%</div>' : ''}
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3>Desglose del Cálculo</h3>
+  </div>
+  
+  ${!result.details || result.details.length === 0 ? `
+    <div class="empty-state">
+      <div class="icon">🧮</div>
+      <h3>Sin datos de cálculo</h3>
+      <p>No hay indicadores registrados para calcular</p>
+    </div>
+  ` : `
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Indicador</th>
+            <th class="text-right">Valor</th>
+            <th class="text-right">Porcentaje</th>
+            <th class="text-right">Valor Ponderado</th>
+            <th class="text-center">Tipo</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${result.details.map(detail => `
+            <tr>
+              <td>${detail.indicator_name}</td>
+              <td class="text-right"><strong>${detail.value.toFixed(2)}</strong></td>
+              <td class="text-right">${detail.percentage.toFixed(2)}%</td>
+              <td class="text-right text-success"><strong>${detail.weighted_value.toFixed(2)}</strong></td>
+              <td class="text-center">
+                ${detail.used_global ? 
+                  '<span class="badge badge-coordinator">Global</span>' : 
+                  '<span class="badge badge-analyst">Individual</span>'
+                }
+              </td>
+            </tr>
+          `).join('')}
+          <tr style="background-color: #f8fafc; font-weight: bold;">
+            <td>TOTAL</td>
+            <td></td>
+            <td class="text-right">${result.totalPercentage ? result.totalPercentage.toFixed(2) + '%' : '-'}</td>
+            <td class="text-right text-success">${result.finalScore.toFixed(2)}</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  `}
+</div>
+
+${result.teamDetails && result.teamDetails.length > 0 ? `
+<div class="card">
+  <div class="card-header">
+    <h3>Detalle del Equipo</h3>
+  </div>
+  
+  ${result.ownScore !== undefined ? `
+    <div class="alert alert-info mb-20">
+      <strong>Cálculo para Coordinador:</strong><br>
+      Nota propia: ${result.ownScore.toFixed(2)} | Promedio del equipo: ${result.teamAverage.toFixed(2)}<br>
+      Nota final = (Nota propia + Promedio equipo) / 2 = <strong>${result.finalScore.toFixed(2)}</strong>
+    </div>
+  ` : ''}
+  
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Miembro del Equipo</th>
+          <th>Rol</th>
+          <th class="text-right">Nota</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${result.teamDetails.map(member => `
+          <tr>
+            <td>${member.user_name}</td>
+            <td>
+              <span class="badge badge-${member.role || 'analyst'}">
+                ${member.role === 'coordinator' ? 'Coordinador' : 
+                  member.role === 'leader' ? 'Líder' : 'Analista'}
+              </span>
+            </td>
+            <td class="text-right"><strong>${member.score.toFixed(2)}</strong></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  </div>
+</div>
+` : ''}
+
+<div class="mt-20">
+  <a href="/notes" class="btn btn-primary">Editar Mis Notas</a>
+  ${!isOwnCalculation ? '<a href="/calculations" class="btn btn-secondary">Volver</a>' : ''}
+  <form method="POST" action="/calculations/recalculate/${user.id}" style="display: inline;">
+    <input type="hidden" name="_csrf" value="${typeof csrfToken !== 'undefined' ? csrfToken : ''}">
+    <button type="submit" class="btn btn-secondary">Recalcular</button>
+  </form>
+</div>
+` }) %>

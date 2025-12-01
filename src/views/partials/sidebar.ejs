@@ -1,0 +1,82 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h1>VDD BDO</h1>
+    <div class="subtitle">Valoración de Desempeño</div>
+  </div>
+  
+  <nav class="sidebar-nav">
+    <ul>
+      <li>
+        <a href="/dashboard">
+          <span class="nav-icon">📊</span>
+          Dashboard
+        </a>
+      </li>
+      
+      <% if (currentUser && currentUser.role !== 'admin') { %>
+      <li>
+        <a href="/notes">
+          <span class="nav-icon">📝</span>
+          Mis Notas
+        </a>
+      </li>
+      <li>
+        <a href="/calculations">
+          <span class="nav-icon">🧮</span>
+          Mi Resultado
+        </a>
+      </li>
+      <% } %>
+      
+      <% if (currentUser && ['leader', 'coordinator', 'admin'].includes(currentUser.role)) { %>
+      <li>
+        <a href="/calculations/progress">
+          <span class="nav-icon">📈</span>
+          Progreso del Equipo
+        </a>
+      </li>
+      <li>
+        <a href="/export/csv">
+          <span class="nav-icon">📥</span>
+          Exportar CSV
+        </a>
+      </li>
+      <% } %>
+      
+      <% if (currentUser && currentUser.role === 'admin') { %>
+      <li>
+        <a href="/users">
+          <span class="nav-icon">👥</span>
+          Usuarios
+        </a>
+      </li>
+      <li>
+        <a href="/indicators">
+          <span class="nav-icon">📋</span>
+          Indicadores
+        </a>
+      </li>
+      <li>
+        <a href="/calculations/all">
+          <span class="nav-icon">🧮</span>
+          Todos los Cálculos
+        </a>
+      </li>
+      <% } %>
+    </ul>
+  </nav>
+  
+  <div class="sidebar-user">
+    <div class="user-name"><%= currentUser ? currentUser.name : '' %></div>
+    <div class="user-role">
+      <% if (currentUser) { %>
+        <% if (currentUser.role === 'admin') { %>Administrador
+        <% } else if (currentUser.role === 'analyst') { %>Analista
+        <% } else if (currentUser.role === 'coordinator') { %>Coordinador
+        <% } else if (currentUser.role === 'leader') { %>Líder
+        <% } %>
+      <% } %>
+    </div>
+    <a href="/logout" class="logout-link">Cerrar Sesión</a>
+  </div>
+</aside>

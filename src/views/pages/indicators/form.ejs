@@ -1,0 +1,49 @@
+<%- include('../../layouts/main', { body: `
+<div class="page-header">
+  <h2>${isEdit ? 'Editar Indicador' : 'Nuevo Indicador'}</h2>
+  <p class="breadcrumb">Inicio / Indicadores / ${isEdit ? 'Editar' : 'Nuevo'}</p>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3>${isEdit ? 'Editar Datos del Indicador' : 'Crear Nuevo Indicador'}</h3>
+  </div>
+  
+  <form method="POST" action="${isEdit ? '/indicators/' + indicator.id : '/indicators'}">
+    <input type="hidden" name="_csrf" value="${typeof csrfToken !== 'undefined' ? csrfToken : ''}">
+    <div class="form-group">
+      <label for="name">Nombre del Indicador *</label>
+      <input type="text" id="name" name="name" value="${indicator ? indicator.name : ''}" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="description">Descripción</label>
+      <textarea id="description" name="description" rows="3">${indicator ? indicator.description : ''}</textarea>
+    </div>
+    
+    <div class="form-group">
+      <label>Roles Aplicables *</label>
+      <div class="checkbox-group">
+        <label>
+          <input type="checkbox" name="roles" value="analyst" ${indicator && indicator.rolesArray && indicator.rolesArray.includes('analyst') ? 'checked' : ''}>
+          Analista
+        </label>
+        <label>
+          <input type="checkbox" name="roles" value="coordinator" ${indicator && indicator.rolesArray && indicator.rolesArray.includes('coordinator') ? 'checked' : ''}>
+          Coordinador
+        </label>
+        <label>
+          <input type="checkbox" name="roles" value="leader" ${indicator && indicator.rolesArray && indicator.rolesArray.includes('leader') ? 'checked' : ''}>
+          Líder
+        </label>
+      </div>
+      <p class="help-text">Seleccione los roles que evaluarán este indicador</p>
+    </div>
+    
+    <div class="mt-20">
+      <button type="submit" class="btn btn-primary">${isEdit ? 'Guardar Cambios' : 'Crear Indicador'}</button>
+      <a href="/indicators" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</div>
+` }) %>

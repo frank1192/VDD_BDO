@@ -1,0 +1,68 @@
+<%- include('../../layouts/main', { body: `
+<div class="page-header">
+  <h2>${isEdit ? 'Editar Usuario' : 'Nuevo Usuario'}</h2>
+  <p class="breadcrumb">Inicio / Usuarios / ${isEdit ? 'Editar' : 'Nuevo'}</p>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3>${isEdit ? 'Editar Datos del Usuario' : 'Crear Nuevo Usuario'}</h3>
+  </div>
+  
+  <form method="POST" action="${isEdit ? '/users/' + user.id : '/users'}">
+    <input type="hidden" name="_csrf" value="${typeof csrfToken !== 'undefined' ? csrfToken : ''}">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="name">Nombre Completo *</label>
+        <input type="text" id="name" name="name" value="${user ? user.name : ''}" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="username">Usuario *</label>
+        <input type="text" id="username" name="username" value="${user ? user.username : ''}" required>
+      </div>
+    </div>
+    
+    <div class="form-row">
+      <div class="form-group">
+        <label for="password">${isEdit ? 'Nueva Contraseña (dejar vacío para mantener)' : 'Contraseña *'}</label>
+        <input type="password" id="password" name="password" ${isEdit ? '' : 'required'}>
+      </div>
+      
+      <div class="form-group">
+        <label for="role">Rol *</label>
+        <select id="role" name="role" required>
+          <option value="">Seleccione un rol</option>
+          <option value="analyst" ${user && user.role === 'analyst' ? 'selected' : ''}>Analista</option>
+          <option value="coordinator" ${user && user.role === 'coordinator' ? 'selected' : ''}>Coordinador</option>
+          <option value="leader" ${user && user.role === 'leader' ? 'selected' : ''}>Líder</option>
+          <option value="admin" ${user && user.role === 'admin' ? 'selected' : ''}>Administrador</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="team_leader_id">Líder / Coordinador Asignado</label>
+      <select id="team_leader_id" name="team_leader_id">
+        <option value="">Sin asignar</option>
+        <optgroup label="Líderes">
+          ${leaders.map(l => `
+            <option value="${l.id}" ${user && user.team_leader_id === l.id ? 'selected' : ''}>${l.name}</option>
+          `).join('')}
+        </optgroup>
+        <optgroup label="Coordinadores">
+          ${coordinators.map(c => `
+            <option value="${c.id}" ${user && user.team_leader_id === c.id ? 'selected' : ''}>${c.name}</option>
+          `).join('')}
+        </optgroup>
+      </select>
+      <p class="help-text">Seleccione el líder o coordinador al que reporta este usuario</p>
+    </div>
+    
+    <div class="mt-20">
+      <button type="submit" class="btn btn-primary">${isEdit ? 'Guardar Cambios' : 'Crear Usuario'}</button>
+      <a href="/users" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</div>
+` }) %>

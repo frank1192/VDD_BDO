@@ -1,0 +1,63 @@
+<%- include('../../layouts/main', { body: `
+<div class="page-header">
+  <h2>Progreso del Equipo</h2>
+  <p class="breadcrumb">Inicio / Progreso</p>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3>Estado del Registro de Notas</h3>
+    <a href="/export/csv" class="btn btn-success">Exportar CSV</a>
+  </div>
+  
+  ${progress.length === 0 ? `
+    <div class="empty-state">
+      <div class="icon">👥</div>
+      <h3>Sin miembros de equipo</h3>
+      <p>No tiene miembros asignados a su equipo</p>
+    </div>
+  ` : `
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Miembro</th>
+            <th>Rol</th>
+            <th>Progreso</th>
+            <th class="text-center">Completado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${progress.map(p => `
+            <tr>
+              <td><strong>${p.user_name}</strong></td>
+              <td>
+                <span class="badge badge-${p.role}">
+                  ${p.role === 'analyst' ? 'Analista' : 
+                    p.role === 'coordinator' ? 'Coordinador' : 'Líder'}
+                </span>
+              </td>
+              <td style="width: 200px;">
+                <div class="progress-bar">
+                  <div class="progress-bar-fill" style="width: ${p.percentage}%;"></div>
+                </div>
+                <div class="progress-text">${p.completed} de ${p.total} indicadores</div>
+              </td>
+              <td class="text-center">
+                ${p.percentage === 100 ? 
+                  '<span class="text-success" style="font-size: 1.5rem;">✓</span>' :
+                  '<span class="text-warning">' + p.percentage + '%</span>'
+                }
+              </td>
+              <td>
+                <a href="/calculations/user/${p.user_id}" class="btn btn-secondary btn-sm">Ver Resultado</a>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `}
+</div>
+` }) %>

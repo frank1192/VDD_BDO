@@ -1,0 +1,28 @@
+{
+  "name": "vdd_bdo",
+  "version": "1.0.0",
+  "description": "Sistema de Valoración de Desempeño - Monolito Node.js",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "keywords": [
+    "performance",
+    "evaluation",
+    "nodejs",
+    "express"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "better-sqlite3": "^12.5.0",
+    "csrf-csrf": "^4.0.3",
+    "csv-stringify": "^6.6.0",
+    "ejs": "^3.1.10",
+    "express": "^5.2.0",
+    "express-rate-limit": "^8.2.1",
+    "express-session": "^1.18.2"
+  }
+}
