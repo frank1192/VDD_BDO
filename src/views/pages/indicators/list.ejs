@@ -1,0 +1,57 @@
+<%- include('../../layouts/main', { body: `
+<div class="page-header">
+  <h2>Gestión de Indicadores</h2>
+  <p class="breadcrumb">Inicio / Indicadores</p>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3>Lista de Indicadores</h3>
+    <a href="/indicators/new" class="btn btn-primary">Nuevo Indicador</a>
+  </div>
+  
+  ${indicators.length === 0 ? `
+    <div class="empty-state">
+      <div class="icon">📋</div>
+      <h3>No hay indicadores registrados</h3>
+      <p>Comience agregando indicadores de evaluación</p>
+    </div>
+  ` : `
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Roles Aplicables</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${indicators.map(ind => `
+            <tr>
+              <td><strong>${ind.name}</strong></td>
+              <td>${ind.description || '-'}</td>
+              <td>
+                ${ind.roles.split(',').map(role => `
+                  <span class="badge badge-${role.trim()}">
+                    ${role.trim() === 'analyst' ? 'Analista' : 
+                      role.trim() === 'coordinator' ? 'Coordinador' : 
+                      role.trim() === 'leader' ? 'Líder' : role.trim()}
+                  </span>
+                `).join(' ')}
+              </td>
+              <td class="actions">
+                <a href="/indicators/${ind.id}/edit" class="btn btn-secondary btn-sm">Editar</a>
+                <form method="POST" action="/indicators/${ind.id}/delete" style="display: inline;" onsubmit="return confirmDelete('¿Está seguro de eliminar el indicador ${ind.name}?')">
+                  <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                </form>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `}
+</div>
+` }) %>

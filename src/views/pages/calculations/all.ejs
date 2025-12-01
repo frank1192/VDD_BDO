@@ -1,0 +1,58 @@
+<%- include('../../layouts/main', { body: `
+<div class="page-header">
+  <h2>Todos los Cálculos</h2>
+  <p class="breadcrumb">Inicio / Cálculos / Todos</p>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3>Resultados de Todos los Usuarios</h3>
+    <a href="/export/csv" class="btn btn-success">Exportar CSV</a>
+  </div>
+  
+  ${results.length === 0 ? `
+    <div class="empty-state">
+      <div class="icon">🧮</div>
+      <h3>No hay resultados</h3>
+      <p>No hay usuarios con notas registradas</p>
+    </div>
+  ` : `
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Rol</th>
+            <th class="text-right">Nota Final</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${results.map(r => `
+            <tr>
+              <td><strong>${r.user.name}</strong></td>
+              <td>
+                <span class="badge badge-${r.user.role}">
+                  ${r.user.role === 'analyst' ? 'Analista' : 
+                    r.user.role === 'coordinator' ? 'Coordinador' : 'Líder'}
+                </span>
+              </td>
+              <td class="text-right">
+                <strong style="font-size: 1.2rem; color: ${r.result.finalScore >= 70 ? '#7AB929' : r.result.finalScore >= 50 ? '#F1AB00' : '#C3261F'};">
+                  ${r.result.finalScore.toFixed(2)}
+                </strong>
+              </td>
+              <td>
+                <a href="/calculations/user/${r.user.id}" class="btn btn-secondary btn-sm">Ver Detalle</a>
+                <form method="POST" action="/calculations/recalculate/${r.user.id}" style="display: inline;">
+                  <button type="submit" class="btn btn-primary btn-sm">Recalcular</button>
+                </form>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `}
+</div>
+` }) %>

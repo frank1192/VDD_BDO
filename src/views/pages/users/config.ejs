@@ -1,0 +1,82 @@
+<%- include('../../layouts/main', { body: `
+<div class="page-header">
+  <h2>Configuración de Porcentajes</h2>
+  <p class="breadcrumb">Inicio / Usuarios / ${user.name} / Configuración</p>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3>Porcentajes e Indicadores para ${user.name}</h3>
+    <div>
+      <span class="badge badge-${user.role}">
+        ${user.role === 'analyst' ? 'Analista' : user.role === 'coordinator' ? 'Coordinador' : 'Líder'}
+      </span>
+    </div>
+  </div>
+  
+  ${configs.length === 0 ? `
+    <div class="empty-state">
+      <div class="icon">📋</div>
+      <h3>No hay indicadores configurados</h3>
+      <p>Este usuario no tiene indicadores asignados a su rol</p>
+      <a href="/indicators" class="btn btn-primary mt-20">Gestionar Indicadores</a>
+    </div>
+  ` : `
+    <form method="POST" action="/users/${user.id}/config" id="config-form">
+      <div class="alert alert-info">
+        <strong>Total de porcentajes:</strong> <span id="total-percentage">${totalPercentage.toFixed(2)}%</span>
+        <span class="text-muted"> (debe sumar 100%)</span>
+      </div>
+      
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Indicador</th>
+              <th>Descripción</th>
+              <th style="width: 120px;">Porcentaje (%)</th>
+              <th style="width: 150px;">Valor Global</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${configs.map(config => `
+              <tr>
+                <td><strong>${config.indicator_name}</strong></td>
+                <td>${config.indicator_description || '-'}</td>
+                <td>
+                  <input type="number" 
+                         name="indicators[${config.indicator_id}][percentage]" 
+                         value="${config.percentage}" 
+                         min="0" 
+                         max="100" 
+                         step="0.01"
+                         style="width: 100%;">
+                </td>
+                <td>
+                  <input type="number" 
+                         name="indicators[${config.indicator_id}][global_value]" 
+                         value="${config.global_value !== null ? config.global_value : ''}" 
+                         min="0" 
+                         max="100" 
+                         step="0.01"
+                         placeholder="Sin valor"
+                         style="width: 100%;">
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+      
+      <p class="help-text mt-10">
+        <strong>Valor Global:</strong> Si se define, este valor sobrescribirá la nota ingresada por el usuario para este indicador.
+      </p>
+      
+      <div class="mt-20">
+        <button type="submit" class="btn btn-primary">Guardar Configuración</button>
+        <a href="/users" class="btn btn-secondary">Volver</a>
+      </div>
+    </form>
+  `}
+</div>
+` }) %>

@@ -1,0 +1,23 @@
+<% if (flash && flash.success) { %>
+<div class="alert alert-success">
+  <%= flash.success %>
+</div>
+<% } %>
+
+<% if (flash && flash.error) { %>
+<div class="alert alert-error">
+  <%= flash.error %>
+</div>
+<% } %>
+
+<% if (flash && flash.warning) { %>
+<div class="alert alert-warning">
+  <%= flash.warning %>
+</div>
+<% } %>
+
+<% if (flash && flash.info) { %>
+<div class="alert alert-info">
+  <%= flash.info %>
+</div>
+<% } %>

@@ -1,0 +1,77 @@
+<%- include('../layouts/main', { body: `
+<div class="page-header">
+  <h2>Dashboard</h2>
+  <p class="breadcrumb">Inicio / Dashboard</p>
+</div>
+
+<div class="stats-grid">
+  ${user.role === 'admin' ? `
+    <div class="stat-card">
+      <div class="stat-value">${dashboardData.totalUsers}</div>
+      <div class="stat-label">Usuarios Registrados</div>
+    </div>
+    <div class="stat-card success">
+      <div class="stat-value">${dashboardData.totalIndicators}</div>
+      <div class="stat-label">Indicadores Activos</div>
+    </div>
+    <div class="stat-card warning">
+      <div class="stat-value">${dashboardData.pendingNotes}</div>
+      <div class="stat-label">Notas Pendientes</div>
+    </div>
+  ` : `
+    <div class="stat-card">
+      <div class="stat-value">${dashboardData.assignedIndicators}</div>
+      <div class="stat-label">Indicadores Asignados</div>
+    </div>
+    <div class="stat-card success">
+      <div class="stat-value">${dashboardData.completedNotes}</div>
+      <div class="stat-label">Notas Registradas</div>
+    </div>
+    <div class="stat-card warning">
+      <div class="stat-value">${dashboardData.pendingNotes}</div>
+      <div class="stat-label">Notas Pendientes</div>
+    </div>
+  `}
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3>Acciones Rápidas</h3>
+  </div>
+  <div class="quick-actions">
+    ${user.role === 'admin' ? `
+      <a href="/users" class="btn btn-primary mr-10">Gestionar Usuarios</a>
+      <a href="/indicators" class="btn btn-primary mr-10">Gestionar Indicadores</a>
+      <a href="/calculations/all" class="btn btn-secondary">Ver Cálculos</a>
+    ` : `
+      <a href="/notes" class="btn btn-primary mr-10">Registrar Notas</a>
+      <a href="/calculations" class="btn btn-secondary mr-10">Ver Mi Resultado</a>
+      ${['leader', 'coordinator'].includes(user.role) ? `
+        <a href="/export/csv" class="btn btn-success">Exportar CSV</a>
+      ` : ''}
+    `}
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3>Bienvenido al Sistema de Valoración de Desempeño</h3>
+  </div>
+  <p>Este sistema le permite:</p>
+  <ul style="margin-left: 20px; margin-top: 10px;">
+    ${user.role === 'admin' ? `
+      <li>Gestionar usuarios y asignar roles</li>
+      <li>Configurar indicadores de evaluación</li>
+      <li>Definir porcentajes por usuario</li>
+      <li>Visualizar todos los resultados</li>
+    ` : `
+      <li>Registrar sus notas por indicador</li>
+      <li>Ver el cálculo detallado de su resultado</li>
+      ${['leader', 'coordinator'].includes(user.role) ? `
+        <li>Ver el progreso de su equipo</li>
+        <li>Exportar resultados a CSV</li>
+      ` : ''}
+    `}
+  </ul>
+</div>
+` }) %>

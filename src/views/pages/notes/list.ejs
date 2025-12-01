@@ -1,0 +1,85 @@
+<%- include('../../layouts/main', { body: `
+<div class="page-header">
+  <h2>Mis Notas</h2>
+  <p class="breadcrumb">Inicio / Mis Notas</p>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3>Registro de Notas por Indicador</h3>
+  </div>
+  
+  ${notes.length === 0 ? `
+    <div class="empty-state">
+      <div class="icon">📝</div>
+      <h3>No hay indicadores asignados</h3>
+      <p>No tiene indicadores para registrar notas</p>
+    </div>
+  ` : `
+    <form method="POST" action="/notes" onsubmit="return validateNotes(this)">
+      <div class="alert alert-info">
+        <strong>Total de porcentajes:</strong> ${totalPercentage.toFixed(2)}%
+        ${Math.abs(totalPercentage - 100) > 0.01 ? '<span class="text-warning"> (Advertencia: debe sumar 100%)</span>' : '<span class="text-success"> ✓</span>'}
+      </div>
+      
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Indicador</th>
+              <th>Descripción</th>
+              <th style="width: 100px;">Porcentaje</th>
+              <th style="width: 120px;">Nota (0-100)</th>
+              <th style="width: 100px;">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${notes.map(note => `
+              <tr>
+                <td><strong>${note.indicator_name}</strong></td>
+                <td>${note.indicator_description || '-'}</td>
+                <td class="text-center">${(note.percentage || 0).toFixed(1)}%</td>
+                <td>
+                  ${note.global_value !== null ? `
+                    <input type="number" 
+                           value="${note.global_value}" 
+                           disabled
+                           style="width: 100%; background: #f0f0f0;">
+                    <input type="hidden" name="notes[${note.indicator_id}]" value="${note.global_value}">
+                  ` : `
+                    <input type="number" 
+                           name="notes[${note.indicator_id}]" 
+                           value="${note.value !== null ? note.value : ''}" 
+                           min="0" 
+                           max="100" 
+                           step="0.01"
+                           data-indicator="${note.indicator_name}"
+                           style="width: 100%;">
+                  `}
+                </td>
+                <td class="text-center">
+                  ${note.global_value !== null ? 
+                    '<span class="badge badge-coordinator">Global</span>' :
+                    (note.value !== null ? 
+                      '<span class="text-success">✓ Registrada</span>' : 
+                      '<span class="text-warning">Pendiente</span>')
+                  }
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+      
+      <p class="help-text mt-10">
+        Los indicadores marcados como "Global" tienen un valor definido por el administrador y no pueden ser modificados.
+      </p>
+      
+      <div class="mt-20">
+        <button type="submit" class="btn btn-primary">Guardar Notas</button>
+        <a href="/calculations" class="btn btn-secondary">Ver Mi Resultado</a>
+      </div>
+    </form>
+  `}
+</div>
+` }) %>

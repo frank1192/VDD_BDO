@@ -1,0 +1,14 @@
+<%- include('../layouts/main', { body: `
+<div class="page-header">
+  <h2>Error</h2>
+</div>
+
+<div class="card">
+  <div class="empty-state">
+    <div class="icon">⚠️</div>
+    <h3>Ha ocurrido un error</h3>
+    <p>${typeof message !== 'undefined' ? message : 'Error desconocido'}</p>
+    <a href="/dashboard" class="btn btn-primary mt-20">Volver al Dashboard</a>
+  </div>
+</div>
+` }) %>
