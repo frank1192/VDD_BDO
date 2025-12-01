@@ -20,8 +20,8 @@ const UserIndicatorConfig = require('../src/models/userIndicatorConfig');
 const Calculation = require('../src/models/calculation');
 
 describe('VDD BDO - Model Tests', () => {
-  before(() => {
-    db.initialize();
+  before(async () => {
+    await db.initializeAsync();
   });
 
   after(() => {
