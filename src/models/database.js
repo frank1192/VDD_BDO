@@ -31,11 +31,12 @@ class DatabaseWrapper {
       run(...params) {
         self._db.run(sql, params);
         // Return lastInsertRowid for INSERT operations - get this BEFORE save
-        const lastId = self._db.exec('SELECT last_insert_rowid() as id')[0];
+        const execResult = self._db.exec('SELECT last_insert_rowid() as id');
+        const lastId = execResult && execResult.length > 0 ? execResult[0] : null;
         const changes = self._db.getRowsModified();
         self._save();
         return {
-          lastInsertRowid: lastId ? lastId.values[0][0] : 0,
+          lastInsertRowid: lastId && lastId.values && lastId.values.length > 0 ? lastId.values[0][0] : 0,
           changes: changes
         };
       },
@@ -127,18 +128,10 @@ async function initializeAsync() {
   initializeTables();
 }
 
-// Synchronous initialize for backward compatibility
+// Synchronous initialize - deprecated, use initializeAsync instead
 function initialize() {
   if (!SQL) {
-    // If SQL.js not ready yet, initialize it synchronously
-    // This is for backward compatibility with existing code
-    console.log('Initializing SQL.js synchronously...');
-    initSqlJs().then((sql) => {
-      SQL = sql;
-      loadDatabase();
-      initializeTables();
-    });
-    return;
+    throw new Error('SQL.js not initialized. Use initializeAsync() for proper initialization.');
   }
   loadDatabase();
   initializeTables();
@@ -228,10 +221,12 @@ function initializeTables() {
 // Getter for db that ensures it's loaded
 const db = {
   get prepare() {
-    return loadDatabase().prepare.bind(loadDatabase());
+    const instance = loadDatabase();
+    return instance.prepare.bind(instance);
   },
   get exec() {
-    return loadDatabase().exec.bind(loadDatabase());
+    const instance = loadDatabase();
+    return instance.exec.bind(instance);
   }
 };
 
