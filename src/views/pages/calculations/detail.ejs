@@ -115,6 +115,7 @@ ${result.teamDetails && result.teamDetails.length > 0 ? `
   <a href="/notes" class="btn btn-primary">Editar Mis Notas</a>
   ${!isOwnCalculation ? '<a href="/calculations" class="btn btn-secondary">Volver</a>' : ''}
   <form method="POST" action="/calculations/recalculate/${user.id}" style="display: inline;">
+    <input type="hidden" name="_csrf" value="${typeof csrfToken !== 'undefined' ? csrfToken : ''}">
     <button type="submit" class="btn btn-secondary">Recalcular</button>
   </form>
 </div>

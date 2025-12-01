@@ -23,6 +23,7 @@
     </div>
   ` : `
     <form method="POST" action="/users/${user.id}/config" id="config-form">
+      <input type="hidden" name="_csrf" value="${typeof csrfToken !== 'undefined' ? csrfToken : ''}">
       <div class="alert alert-info">
         <strong>Total de porcentajes:</strong> <span id="total-percentage">${totalPercentage.toFixed(2)}%</span>
         <span class="text-muted"> (debe sumar 100%)</span>

@@ -26,9 +26,18 @@ router.get('/new', requireAdmin, (req, res) => {
 router.post('/', requireAdmin, (req, res) => {
   const { username, password, name, role, team_leader_id } = req.body;
   
+  // Valid roles
+  const validRoles = ['admin', 'analyst', 'coordinator', 'leader'];
+  
   // Validation
   if (!username || !password || !name || !role) {
     req.session.flash = { error: 'Todos los campos son requeridos' };
+    return res.redirect('/users/new');
+  }
+
+  // Validate role
+  if (!validRoles.includes(role)) {
+    req.session.flash = { error: 'Rol no válido' };
     return res.redirect('/users/new');
   }
 
@@ -73,9 +82,18 @@ router.post('/:id', requireAdmin, (req, res) => {
   const { username, password, name, role, team_leader_id } = req.body;
   const userId = req.params.id;
   
+  // Valid roles
+  const validRoles = ['admin', 'analyst', 'coordinator', 'leader'];
+  
   // Validation
   if (!username || !name || !role) {
     req.session.flash = { error: 'Usuario, nombre y rol son requeridos' };
+    return res.redirect(`/users/${userId}/edit`);
+  }
+
+  // Validate role
+  if (!validRoles.includes(role)) {
+    req.session.flash = { error: 'Rol no válido' };
     return res.redirect(`/users/${userId}/edit`);
   }
 

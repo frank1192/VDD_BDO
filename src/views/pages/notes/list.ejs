@@ -17,6 +17,7 @@
     </div>
   ` : `
     <form method="POST" action="/notes" onsubmit="return validateNotes(this)">
+      <input type="hidden" name="_csrf" value="${typeof csrfToken !== 'undefined' ? csrfToken : ''}">
       <div class="alert alert-info">
         <strong>Total de porcentajes:</strong> ${totalPercentage.toFixed(2)}%
         ${Math.abs(totalPercentage - 100) > 0.01 ? '<span class="text-warning"> (Advertencia: debe sumar 100%)</span>' : '<span class="text-success"> ✓</span>'}

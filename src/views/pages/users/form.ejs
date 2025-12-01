@@ -10,6 +10,7 @@
   </div>
   
   <form method="POST" action="${isEdit ? '/users/' + user.id : '/users'}">
+    <input type="hidden" name="_csrf" value="${typeof csrfToken !== 'undefined' ? csrfToken : ''}">
     <div class="form-row">
       <div class="form-group">
         <label for="name">Nombre Completo *</label>

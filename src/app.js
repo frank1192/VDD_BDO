@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
+const crypto = require('crypto');
 const db = require('./models/database');
 
 const app = express();
@@ -9,16 +10,65 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// Trust proxy for production environments
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '..', 'public')));
+
+// Session configuration
+const isProduction = process.env.NODE_ENV === 'production';
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'vdd-bdo-secret-key',
+  secret: process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex'),
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false }
+  cookie: { 
+    secure: isProduction, // Only use secure cookies in production with HTTPS
+    httpOnly: true,
+    sameSite: 'strict',
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
 }));
+
+// CSRF Token generation and validation
+function generateCsrfToken() {
+  return crypto.randomBytes(32).toString('hex');
+}
+
+// CSRF middleware
+app.use((req, res, next) => {
+  // Generate token if not exists
+  if (!req.session.csrfToken) {
+    req.session.csrfToken = generateCsrfToken();
+  }
+  
+  // Make token available to views
+  res.locals.csrfToken = req.session.csrfToken;
+  
+  // Skip validation for GET, HEAD, OPTIONS requests
+  if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
+    return next();
+  }
+  
+  // Validate token for state-changing requests
+  const tokenFromBody = req.body._csrf;
+  const tokenFromSession = req.session.csrfToken;
+  
+  if (!tokenFromBody || tokenFromBody !== tokenFromSession) {
+    req.session.flash = { error: 'Token de seguridad inválido. Por favor, intente de nuevo.' };
+    return res.redirect('back');
+  }
+  
+  // Regenerate token after successful validation
+  req.session.csrfToken = generateCsrfToken();
+  res.locals.csrfToken = req.session.csrfToken;
+  
+  next();
+});
 
 // Make user session available to all views
 app.use((req, res, next) => {
